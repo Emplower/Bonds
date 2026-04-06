@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Купоны">
+<title>Купонный календарь</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --card2: #1c2333;
+    --border: #30363d;
+    --accent: #3fb950;
+    --accent2: #f78166;
+    --accent3: #79c0ff;
+    --purple: #bc8cff;
+    --yellow: #e3b341;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #484f58;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    overflow-x: hidden;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px;
+  }
+  .topbar-row1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .app-title { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .app-title span { color: var(--accent); }
+
+  .refresh-btn {
+    width: 36px; height: 36px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text2);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+  .refresh-btn:active { transform: scale(0.92); background: var(--border); }
+  .refresh-btn.spinning { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── FILTER PILLS ─── */
+  .pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-appearance: none;
+  }
+  .pill:active { transform: scale(0.95); }
+  .pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d1117;
+  }
+
+  /* ─── STATUS ─── */
+  .status-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    min-height: 38px;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .dot.ok { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .dot.loading { background: var(--yellow); animation: blink 0.8s infinite; }
+  .dot.err { background: var(--accent2); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .progress {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+  }
+  .progress.show { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 2px;
+    transition: width 0.25s ease;
+  }
+
+  /* ─── SUMMARY CARDS ─── */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .s-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .s-label { font-size: 9px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .s-val { font-size: 20px; font-weight: 800; line-height: 1; }
+  .s-val.green { color: var(--accent); }
+  .s-val.orange { color: var(--accent2); }
+  .s-val.blue { color: var(--accent3); }
+  .s-val.gray { color: var(--text2); }
+
+  /* ─── SCROLL AREA ─── */
+  .scroll-area {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    padding-bottom: calc(16px + var(--safe-bottom));
+  }
+
+  /* ─── DAY GROUP ─── */
+  .day-group { margin-bottom: 20px; }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .day-badge {
+    min-width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .day-group.is-today .day-badge {
+    background: rgba(63,185,80,0.12);
+    border-color: rgba(63,185,80,0.4);
+  }
+  .day-num { font-size: 22px; font-weight: 800; line-height: 1; }
+  .day-group.is-today .day-num { color: var(--accent); }
+  .day-wday { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; margin-top: 1px; }
+
+  .day-meta { flex: 1; }
+  .day-full { font-size: 14px; font-weight: 700; color: var(--text); }
+  .day-diff { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .day-group.is-today .day-diff { color: var(--accent); font-weight: 600; }
+
+  .day-count-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+
+  /* ─── BOND ROW ─── */
+  .bond-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.15s;
+    -webkit-appearance: none;
+  }
+  .bond-row:active { transform: scale(0.98); background: var(--card2); }
+
+  .type-badge {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+  .type-ofz { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+  .type-corp { background: rgba(63,185,80,0.12); color: var(--accent); border: 1px solid rgba(63,185,80,0.25); }
+  .type-muni { background: rgba(247,129,102,0.12); color: var(--accent2); border: 1px solid rgba(247,129,102,0.25); }
+
+  .bond-info { flex: 1; min-width: 0; }
+  .bond-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bond-meta { font-size: 11px; color: var(--text2); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
+  .bond-qty { background: var(--card2); border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+
+  .bond-right { text-align: right; flex-shrink: 0; }
+  .coupon-total { font-size: 16px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .coupon-per { font-size: 11px; color: var(--text2); margin-top: 3px; }
+  .coupon-loading { font-size: 12px; color: var(--text3); }
+
+  /* ─── EMPTY ─── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text2);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; line-height: 1.5; }
+
+  /* ─── MISSING DATA NOTE ─── */
+  .missing-note {
+    background: rgba(227,179,65,0.08);
+    border: 1px solid rgba(227,179,65,0.25);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--yellow);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--card2);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text2);
+    background: transparent;
+    border: none;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #0d1117;
+  }
+
+  /* ─── ИСТОРИЯ ─── */
+  .history-stats {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .history-stats-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .history-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+  }
+  .h-val { font-size: 18px; font-weight: 800; color: var(--accent2); }
+  .h-label { font-size: 10px; color: var(--text2); margin-top: 3px; }
+
+  .bond-row.bond-past { opacity: 0.6; }
+  .coupon-total.past { color: var(--text2); }
+  .day-group.is-past .day-badge {
+    background: rgba(139,148,158,0.08);
+    border-color: rgba(139,148,158,0.2);
+  }
+  .day-group.is-past .day-num { color: var(--text2); }
+  .day-group.is-past .day-diff { color: var(--text3); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row1">
+    <div class="app-title">Купон<span>.</span>Календарь</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">⟳</button>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-calendar" onclick="switchTab('calendar')">📅 Календарь</button>
+    <button class="tab-btn" id="tab-history" onclick="switchTab('history')">📜 История (7 дней)</button>
+  </div>
+  <div id="pills-wrap">
+    <div class="pills">
+      <button class="pill active" id="pill-0t" onclick="setRange('today')">Сегодня</button>
+      <button class="pill" id="pill-1" onclick="setRange(1)">2 дня</button>
+      <button class="pill" id="pill-7" onclick="setRange(7)">7 дней</button>
+      <button class="pill" id="pill-30" onclick="setRange(30)">30 дней</button>
+      <button class="pill" id="pill-90" onclick="setRange(90)">3 месяца</button>
+      <button class="pill" id="pill-0" onclick="setRange(0)">Все</button>
+    </div>
+  </div>
+</div>
+
+<div class="status-strip">
+  <div class="dot" id="dot"></div>
+  <div id="statusText" style="flex:1">Загрузка данных...</div>
+  <div class="progress" id="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<div class="summary" id="summary">
+  <div class="s-card">
+    <div class="s-label">Сегодня</div>
+    <div class="s-val green" id="s-today">—</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Неделя</div>
+    <div class="s-val orange" id="s-week">—</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Месяц</div>
+    <div class="s-val blue" id="s-month">—</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Бумаг</div>
+    <div class="s-val gray" id="s-total">18</div>
+  </div>
+</div>
+
+<div class="scroll-area" id="calendar">
+  <div class="empty-state">
+    <div class="empty-icon">📅</div>
+    <div class="empty-title">Загрузка данных</div>
+    <div class="empty-sub">Получаем актуальные даты купонов<br>с Московской биржи...</div>
+  </div>
+</div>
+
+<div class="scroll-area" id="history" style="display:none">
+  <div class="empty-state">
+    <div class="empty-icon">📜</div>
+    <div class="empty-title">Загрузка истории</div>
+    <div class="empty-sub">Данные о прошедших выплатах...</div>
+  </div>
+</div>
+
+<script>
+// ─── ПОРТФЕЛЬ (из PDF: название, ISIN, тип, кол-во, ставка купона) ───
+const bonds = [
+  { isin: 'RU000A105FZ9', name: 'ОФЗ 26241',                  type: 'ofz',  secid: 'SU26241RMFS8', qty: 34, rate: 47.37 },
+  { isin: 'RU000A0JV4Q1', name: 'ОФЗ 29010',                  type: 'ofz',  secid: 'SU29010RMFS4', qty: 200, rate: 95.44 },
+  { isin: 'RU000A0JXFM1', name: 'ОФЗ 26221',                  type: 'ofz',  secid: 'SU26221RMFS0', qty: 300, rate: 38.39 },
+  { isin: 'RU000A0ZYR91', name: 'ГТЛК БО 001Р-08',            type: 'corp', secid: null,            qty: 250, rate: 28.22 },
+  { isin: 'RU000A100EF5', name: 'ОФЗ 26230',                  type: 'ofz',  secid: 'SU26230RMFS1', qty: 300, rate: 38.39 },
+  { isin: 'RU000A1017J5', name: 'Газпром нефть БО-003P-02R',  type: 'corp', secid: null,            qty: 300, rate: 17.83 },
+  { isin: 'RU000A1038V6', name: 'ОФЗ 26238',                  type: 'ofz',  secid: 'SU26238RMFS4', qty: 400, rate: 35.40 },
+  { isin: 'RU000A102BV4', name: 'ОФЗ 29020',                  type: 'ofz',  secid: 'SU29020RMFS3', qty: 400, rate: 38.70 },
+  { isin: 'RU000A10EMS7', name: 'Село Зелёное Холд. БО-01',  type: 'corp', secid: null,            qty: 250, rate: 14.59 },
+  { isin: 'RU000A10ASW4', name: 'КАМАЗ ПАО БО-П14',           type: 'corp', secid: null,            qty: 400, rate: 15.51 },
+  { isin: 'RU000A10CS75', name: 'Аэрофлот П02-БО-02',         type: 'corp', secid: null,            qty: 153, rate: 14.14 },
+  { isin: 'RU000A1033Z8', name: 'Гор.Обл.Займ Москвы 74 в.',  type: 'muni', secid: null,            qty: 200, rate: 36.80 },
+  { isin: 'RU000A10ASC6', name: 'ПАО ЛК Европлан 001P-09',    type: 'corp', secid: null,            qty: 400, rate: 19.73 },
+  { isin: 'RU000A10DPB8', name: 'КАМАЗ ПАО БО-П19',           type: 'corp', secid: null,            qty: 400, rate: 14.96 },
+  { isin: 'RU000A10DYC8', name: 'ФПК 002Р-01',                type: 'corp', secid: null,            qty: 400, rate: 12.66 },
+  { isin: 'RU000A1025A7', name: 'ОФЗ 29015',                  type: 'ofz',  secid: 'SU29015RMFS3', qty: 290, rate: 40.27 },
+  { isin: 'RU000A10D3K3', name: 'Почта России 003P-02',        type: 'corp', secid: null,            qty: 400, rate: 15.27 },
+  { isin: 'RU000A10EA16', name: 'Почта России 003P-03',        type: 'corp', secid: null,            qty: 360, rate: 14.59 },
+];
+
+let couponDates = {};  // isin -> nextCoupon string (YYYY-MM-DD)
+let historyDates = {}; // isin -> [{ date, rate }] — выплаты за последние 7 дней
+let currentRange = 'today';
+let isLoading = false;
+
+function setRange(r) {
+  currentRange = r;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  const id = r === 'today' ? 'pill-0t' : 'pill-' + r;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  render();
+}
+
+function setStatus(state, text, pct) {
+  const dot = document.getElementById('dot');
+  const st = document.getElementById('statusText');
+  const prog = document.getElementById('progress');
+  const fill = document.getElementById('progressFill');
+  dot.className = 'dot ' + state;
+  st.textContent = text;
+  if (pct !== undefined) {
+    prog.classList.add('show');
+    fill.style.width = pct + '%';
+  } else {
+    prog.classList.remove('show');
+  }
+}
+
+async function fetchBond(bond) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  const isin = bond.isin;
+
+  let nextDate = null;
+  let actualRate = null;
+  const pastItems = []; // выплаты за последние 7 дней
+
+  const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(today.getDate() - 7);
+
+  // Шаг 1: bondization.json — даёт актуальный value купона (важно для флоатеров)
+  try {
+    const hurl = `https://iss.moex.com/iss/securities/${isin}/bondization.json?iss.meta=off`;
+    const hres = await fetch(hurl, { signal: AbortSignal.timeout(8000) });
+    if (hres.ok) {
+      const hdata = await hres.json();
+      const block = hdata.coupons?.data?.length ? hdata.coupons : null;
+      if (block) {
+        const cols     = block.columns;
+        const dateIdx  = cols.indexOf('coupondate');
+        const valueIdx = cols.indexOf('value');
+        if (dateIdx !== -1) {
+          const allDates = block.data
+            .map(r => ({ s: r[dateIdx], v: valueIdx !== -1 ? r[valueIdx] : null }))
+            .filter(x => x.s)
+            .map(x => {
+              const [y,m,d] = x.s.split('-').map(Number);
+              return { s: x.s, v: x.v, t: new Date(y,m-1,d).getTime() };
+            });
+
+          // Прошедшие за 7 дней — для истории
+          allDates
+            .filter(x => x.t >= sevenDaysAgo.getTime() && x.t <= today.getTime())
+            .forEach(x => pastItems.push({ date: x.s, rate: x.v }));
+
+          // Ближайшая >= вчера — для календаря
+          const candidates = allDates
+            .filter(x => x.t >= yesterday.getTime())
+            .sort((a,b) => a.t - b.t);
+          if (candidates.length) {
+            nextDate   = candidates[0].s;
+            actualRate = candidates[0].v;
+          }
+        }
+      }
+    }
+  } catch {}
+
+  // Шаг 2: если bondization не дал дату — fallback на NEXTCOUPON (работает для ОФЗ)
+  if (!nextDate) {
+    try {
+      const url = bond.secid
+        ? `https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOB/securities/${bond.secid}.json`
+        : `https://iss.moex.com/iss/engines/stock/markets/bonds/securities/${bond.isin}.json`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.securities?.data?.length) {
+          const cols = data.securities.columns;
+          const row  = data.securities.data[0];
+          const nc   = row[cols.indexOf('NEXTCOUPON')];
+          if (nc) nextDate = nc;
+          const cvIdx = cols.indexOf('COUPONVALUE');
+          if (cvIdx !== -1 && row[cvIdx] && !actualRate) actualRate = row[cvIdx];
+        }
+      }
+    } catch {}
+  }
+
+  // Шаг 3: для бумаг прошедших через fallback — отдельно ищем историю в bondization
+  // (ОФЗ тоже есть в bondization, просто блок coupons там пустой — берём из amortizations? нет —
+  //  на самом деле ОФЗ есть в bondization.coupons, просто иногда coupondate = null для старых.
+  //  Поэтому повторяем запрос с расширенным окном только для истории если pastItems пуст)
+  if (pastItems.length === 0) {
+    try {
+      const hurl = `https://iss.moex.com/iss/securities/${isin}/bondization.json?iss.meta=off`;
+      const hres = await fetch(hurl, { signal: AbortSignal.timeout(8000) });
+      if (hres.ok) {
+        const hdata = await hres.json();
+        const block = hdata.coupons?.data?.length ? hdata.coupons : null;
+        if (block) {
+          const cols     = block.columns;
+          const dateIdx  = cols.indexOf('coupondate');
+          const valueIdx = cols.indexOf('value');
+          if (dateIdx !== -1) {
+            block.data
+              .map(r => ({ s: r[dateIdx], v: valueIdx !== -1 ? r[valueIdx] : null }))
+              .filter(x => x.s)
+              .map(x => {
+                const [y,m,d] = x.s.split('-').map(Number);
+                return { s: x.s, v: x.v, t: new Date(y,m-1,d).getTime() };
+              })
+              .filter(x => x.t >= sevenDaysAgo.getTime() && x.t <= today.getTime())
+              .forEach(x => pastItems.push({ date: x.s, rate: x.v }));
+          }
+        }
+      }
+    } catch {}
+  }
+
+  return { date: nextDate, rate: actualRate, past: pastItems };
+}
+
+// ─── ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ───
+let currentTab = 'calendar';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('calendar').style.display = tab === 'calendar' ? '' : 'none';
+  document.getElementById('history').style.display  = tab === 'history'  ? '' : 'none';
+  document.getElementById('pills-wrap').style.display = tab === 'calendar' ? '' : 'none';
+  document.getElementById('tab-calendar').classList.toggle('active', tab === 'calendar');
+  document.getElementById('tab-history').classList.toggle('active', tab === 'history');
+  if (tab === 'history') renderHistory();
+}
+
+// ─── РЕНДЕР ИСТОРИИ ───
+function renderHistory() {
+  const hist = document.getElementById('history');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const wdays  = ['вс','пн','вт','ср','чт','пт','сб'];
+
+  // Собираем выплаты за последние 7 дней из historyDates
+  const items = [];
+  let totalSum = 0;
+
+  bonds.forEach(b => {
+    const past = historyDates[b.isin] || [];
+    past.forEach(({ date: ds, rate: r }) => {
+      const [y,mo,dy] = ds.split('-').map(Number);
+      const d = new Date(y, mo-1, dy);
+      const diff = Math.round((d - today) / 86400000);
+      const rate  = r !== null && r !== undefined ? r : b.rate;
+      const total = rate * b.qty;
+      totalSum += total;
+      items.push({ bond: b, date: d, diff, rate, total });
+    });
+  });
+
+  if (items.length === 0) {
+    hist.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📜</div>
+      <div class="empty-title">Нет выплат за 7 дней</div>
+      <div class="empty-sub">За последние 7 дней выплат не было.<br>Данные подтягиваются с Мосбиржи при загрузке.</div>
+    </div>`;
+    return;
+  }
+
+  items.sort((a,b) => b.date - a.date);
+
+  const uniqueBonds = new Set(items.map(i => i.bond.isin)).size;
+  let html = `<div class="history-stats">
+    <div class="history-stats-title">📊 Статистика за 7 дней</div>
+    <div class="history-stats-grid">
+      <div><div class="h-val">${items.length}</div><div class="h-label">выплат</div></div>
+      <div><div class="h-val">${Math.round(totalSum).toLocaleString('ru-RU')} ₽</div><div class="h-label">получено</div></div>
+      <div><div class="h-val">${uniqueBonds}</div><div class="h-label">бумаг</div></div>
+    </div>
+  </div>`;
+
+  // Группируем по дате
+  const groups = {};
+  items.forEach(item => {
+    const key = item.date.toISOString().slice(0,10);
+    if (!groups[key]) groups[key] = { date: item.date, diff: item.diff, items: [], sum: 0 };
+    groups[key].items.push(item);
+    groups[key].sum += item.total;
+  });
+
+  Object.values(groups).forEach((group, gi) => {
+    const d = group.date;
+    const diffAbs = Math.abs(group.diff);
+    const diffText = group.diff === 0 ? 'сегодня' : group.diff === -1 ? 'вчера' : `${diffAbs} дн. назад`;
+    html += `<div class="day-group is-past" style="animation:fadeIn 0.25s ${gi*40}ms both">
+      <div class="day-header">
+        <div class="day-badge">
+          <div class="day-num">${d.getDate()}</div>
+          <div class="day-wday">${wdays[d.getDay()]}</div>
+        </div>
+        <div class="day-meta">
+          <div class="day-full">${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}</div>
+          <div class="day-diff">✓ ${diffText}</div>
+        </div>
+        <div class="day-count-badge">${group.items.length} выпл. · ${Math.round(group.sum).toLocaleString('ru-RU')} ₽</div>
+      </div>`;
+    group.items.forEach(({ bond, rate, total }) => {
+      const typeLabel = bond.type === 'ofz' ? 'ОФЗ' : bond.type === 'muni' ? 'МО' : 'КО';
+      html += `<div class="bond-row bond-past">
+        <div class="type-badge type-${bond.type}">${typeLabel}</div>
+        <div class="bond-info">
+          <div class="bond-name">${bond.name}</div>
+          <div class="bond-meta">
+            <span class="bond-qty">${bond.qty} шт</span>
+            <span>${rate.toFixed(2)} ₽/шт</span>
+          </div>
+        </div>
+        <div class="bond-right">
+          <div class="coupon-total past">${Math.round(total).toLocaleString('ru-RU')} ₽</div>
+          <div class="coupon-per">выплачено</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  hist.innerHTML = html;
+}
+
+async function loadAll() {
+  if (isLoading) return;
+  isLoading = true;
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  setStatus('loading', 'Загрузка данных с Мосбиржи...', 0);
+
+  let done = 0;
+  const results = await Promise.all(bonds.map(async bond => {
+    const nc = await fetchBond(bond);
+    done++;
+    setStatus('loading', `Загружено ${done} из ${bonds.length}...`, Math.round(done / bonds.length * 100));
+    return { isin: bond.isin, nextCoupon: nc };  // nc = {date, rate} | null
+  }));
+
+  results.forEach(r => {
+    if (r.nextCoupon) {
+      if (r.nextCoupon.date) {
+        couponDates[r.isin] = r.nextCoupon.date;
+        if (r.nextCoupon.rate !== null && r.nextCoupon.rate !== undefined) {
+          const bond = bonds.find(b => b.isin === r.isin);
+          if (bond) bond.rate = r.nextCoupon.rate;
+        }
+      }
+      if (r.nextCoupon.past && r.nextCoupon.past.length) {
+        historyDates[r.isin] = r.nextCoupon.past;
+      }
+    }
+  });
+
+  const loaded = Object.keys(couponDates).length;
+  const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  setStatus('ok', `Обновлено в ${time} · ${loaded}/${bonds.length} бумаг`);
+  btn.classList.remove('spinning');
+  isLoading = false;
+
+  updateSummary();
+  render();
+  if (currentTab === 'history') renderHistory();
+}
+
+function updateSummary() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let t = 0, w = 0, m = 0;
+  bonds.forEach(b => {
+    const nc = couponDates[b.isin];
+    if (!nc) return;
+    const [y,mo,dy] = nc.split('-').map(Number);
+    const d = new Date(y, mo-1, dy);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff === 0) t++;
+    if (diff >= 0 && diff <= 7) w++;
+    if (diff >= 0 && diff <= 30) m++;
+  });
+  document.getElementById('s-today').textContent = t || '0';
+  document.getElementById('s-week').textContent = w || '0';
+  document.getElementById('s-month').textContent = m || '0';
+  document.getElementById('s-total').textContent = bonds.length;
+}
+
+function render() {
+  const cal = document.getElementById('calendar');
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const wdays  = ['вс','пн','вт','ср','чт','пт','сб'];
+
+  let items = bonds.map(b => {
+    const nc = couponDates[b.isin];
+    if (!nc) return null;
+    const [y,mo,dy] = nc.split('-').map(Number);
+    const d = new Date(y, mo-1, dy);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff < -1) return null; // -1 = вчера, страховка на случай задержки
+    return { bond: b, date: d, diff };
+  }).filter(Boolean);
+
+  if (currentRange === 'today') items = items.filter(x => x.diff === 0);
+  else if (currentRange > 0) items = items.filter(x => x.diff <= currentRange);
+  items.sort((a, b) => a.date - b.date);
+
+  if (items.length === 0) {
+    const hasAny = Object.keys(couponDates).length > 0;
+    cal.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">${hasAny ? '📭' : '🔄'}</div>
+      <div class="empty-title">${hasAny ? 'Выплат нет' : 'Нет данных'}</div>
+      <div class="empty-sub">${hasAny ? 'В выбранном периоде нет купонных выплат.<br>Попробуйте расширить диапазон.' : 'Нажмите ⟳ для загрузки данных с Мосбиржи.'}</div>
+    </div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  items.forEach(item => {
+    const key = item.date.toISOString().slice(0,10);
+    if (!groups[key]) groups[key] = { date: item.date, diff: item.diff, items: [] };
+    groups[key].items.push(item);
+  });
+
+  let html = '';
+  Object.values(groups).forEach((group, gi) => {
+    const isToday = group.diff === 0;
+    const d = group.date;
+    const wday = wdays[d.getDay()];
+    const mon = months[d.getMonth()];
+    const diffText = isToday ? 'сегодня' : group.diff === 1 ? 'завтра' : `через ${group.diff} дн.`;
+
+    html += `<div class="day-group ${isToday ? 'is-today' : ''}" style="animation:fadeIn 0.25s ${gi*40}ms both">`;
+    html += `<div class="day-header">
+      <div class="day-badge">
+        <div class="day-num">${d.getDate()}</div>
+        <div class="day-wday">${wday}</div>
+      </div>
+      <div class="day-meta">
+        <div class="day-full">${d.getDate()} ${mon} ${d.getFullYear()}</div>
+        <div class="day-diff">${diffText}</div>
+      </div>
+      <div class="day-count-badge">${group.items.length} выпл.</div>
+    </div>`;
+
+    group.items.forEach(({ bond }) => {
+      const typeLabel = bond.type === 'ofz' ? 'ОФЗ' : bond.type === 'muni' ? 'МО' : 'КО';
+      const total = (bond.rate * bond.qty).toFixed(2);
+      html += `<div class="bond-row">
+        <div class="type-badge type-${bond.type}">${typeLabel}</div>
+        <div class="bond-info">
+          <div class="bond-name">${bond.name}</div>
+          <div class="bond-meta">
+            <span class="bond-qty">${bond.qty} шт</span>
+            <span>${bond.rate.toFixed(2)} ₽/шт</span>
+          </div>
+        </div>
+        <div class="bond-right">
+          <div class="coupon-total">${Number(total).toLocaleString('ru-RU')} ₽</div>
+          <div class="coupon-per">итого выплата</div>
+        </div>
+      </div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  // Missing bonds note
+  const missing = bonds.filter(b => !couponDates[b.isin]);
+  if (missing.length > 0 && Object.keys(couponDates).length > 0) {
+    html += `<div class="missing-note">⚠ Не удалось получить дату купона для ${missing.length} бумаги (${missing.map(b=>b.name).join(', ')})</div>`;
+  }
+
+  cal.innerHTML = html;
+}
+
+// CSS animation
+const style = document.createElement('style');
+style.textContent = '@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }';
+document.head.appendChild(style);
+
+// Load on start
+loadAll();
+</script>
+</body>
+</html>
