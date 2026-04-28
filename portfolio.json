@@ -1,0 +1,20 @@
+[
+  {"isin": "RU000A0JV4Q1", "su": "SU29010RMFS4", "name": "ОФЗ 29010",                 "type": "ofz",  "qty": 200, "avg_price": 103.735, "rate":  95.44},
+  {"isin": "RU000A0JXFM1", "su": "SU26221RMFS0", "name": "ОФЗ 26221",                 "type": "ofz",  "qty": 300, "avg_price":  59.394, "rate":  38.39},
+  {"isin": "RU000A0ZYR91", "su": null,            "name": "ГТЛК БО 001Р-08",           "type": "corp", "qty": 250, "avg_price":  75.000, "rate":  28.22},
+  {"isin": "RU000A100EF5", "su": "SU26230RMFS1",  "name": "ОФЗ 26230",                 "type": "ofz",  "qty": 300, "avg_price":  53.014, "rate":  38.39},
+  {"isin": "RU000A1017J5", "su": null,            "name": "Газпром нефть БО 003Р-02R", "type": "corp", "qty": 300, "avg_price":  77.910, "rate":  17.83},
+  {"isin": "RU000A1038V6", "su": "SU26238RMFS4",  "name": "ОФЗ 26238",                 "type": "ofz",  "qty": 400, "avg_price":  48.990, "rate":  35.40},
+  {"isin": "RU000A102BV4", "su": "SU29020RMFS3",  "name": "ОФЗ 29020",                 "type": "ofz",  "qty": 400, "avg_price":  99.125, "rate":  38.70},
+  {"isin": "RU000A10EMS7", "su": null,            "name": "СелоЗеленое 001Р-03",       "type": "corp", "qty": 250, "avg_price": 100.000, "rate":  14.67},
+  {"isin": "RU000A10ASW4", "su": null,            "name": "КАМАЗ БО-П14",              "type": "corp", "qty": 400, "avg_price": 101.810, "rate":  15.12},
+  {"isin": "RU000A10CS75", "su": null,            "name": "Аэрофлот П02-БО-02",        "type": "corp", "qty": 160, "avg_price":  99.590, "rate":  13.79},
+  {"isin": "RU000A1033Z8", "su": null,            "name": "Гор.Обл.Займ Москвы 74",    "type": "muni", "qty": 200, "avg_price":  68.950, "rate":  36.80},
+  {"isin": "RU000A10ASC6", "su": null,            "name": "Европлан 001P-09",           "type": "corp", "qty": 400, "avg_price": 101.320, "rate":  17.75},
+  {"isin": "RU000A10DPB8", "su": null,            "name": "КАМАЗ БО-П19",              "type": "corp", "qty": 400, "avg_price":  99.970, "rate":  14.59},
+  {"isin": "RU000A10DYC8", "su": null,            "name": "ФПК 002Р-01",               "type": "corp", "qty": 400, "avg_price": 100.470, "rate":  12.66},
+  {"isin": "RU000A1025A7", "su": "SU29015RMFS3",  "name": "ОФЗ 29015",                 "type": "ofz",  "qty": 290, "avg_price":  98.823, "rate":  37.91},
+  {"isin": "RU000A10EA16", "su": null,            "name": "Почта России 003P-03",       "type": "corp", "qty": 360, "avg_price": 100.050, "rate":  14.59},
+  {"isin": "RU000A10EXZ9", "su": null,            "name": "МКПАО Озон 001Р-02",        "type": "corp", "qty": 200, "avg_price": 100.000, "rate":  14.93},
+  {"isin": "RU000A105FZ9", "su": "SU26241RMFS8",  "name": "ОФЗ 26241",                 "type": "ofz",  "qty":  45, "avg_price":  81.348, "rate":  47.37}
+]
