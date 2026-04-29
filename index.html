@@ -427,6 +427,82 @@ body {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
 }
+
+/* ── Live P&L (данные от бота) ── */
+.live-title {
+  font-size: 11px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.live-badge {
+  font-size: 10px; color: var(--text3);
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 3px 8px;
+  font-weight: 500; text-transform: none; letter-spacing: 0;
+  white-space: nowrap;
+}
+.live-summary {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.live-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 8px; text-align: center;
+}
+.live-label { font-size: 9px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.live-val   { font-size: 17px; font-weight: 800; line-height: 1; }
+.live-sub   { font-size: 10px; color: var(--text2); margin-top: 3px; }
+.pnl-pos { color: var(--accent); }
+.pnl-neg { color: var(--accent2); }
+
+.live-tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 12px; }
+.live-table { width: 100%; border-collapse: collapse; min-width: 360px; }
+.live-table th {
+  font-size: 10px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 0 6px 8px; text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+.live-table th:first-child { text-align: left; }
+.live-table td { padding: 9px 6px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: right; }
+.live-table td:first-child { text-align: left; }
+.live-table tr:last-child td { border-bottom: none; }
+.lt-name { font-weight: 700; font-size: 12px; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lt-meta { font-size: 10px; color: var(--text2); margin-top: 1px; }
+.lt-num  { font-weight: 700; white-space: nowrap; }
+.lt-pos  { color: var(--accent); }
+.lt-neg  { color: var(--accent2); }
+.lt-neu  { color: var(--text2); }
+
+.ai-section {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px; margin-bottom: 12px;
+}
+.ai-toggle {
+  width: 100%; background: transparent; border: none;
+  color: var(--accent3); font-size: 13px; font-weight: 700;
+  cursor: pointer; text-align: left; padding: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  -webkit-appearance: none;
+}
+.ai-toggle:active { opacity: 0.7; }
+.ai-body { display: none; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.ai-body.open { display: block; }
+.ai-body h2 { font-size: 13px; font-weight: 800; color: var(--text); margin: 12px 0 4px; }
+.ai-body h3 { font-size: 12px; font-weight: 700; color: var(--text2); margin: 8px 0 4px; }
+.ai-body p  { font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 6px; }
+.ai-body ul { padding-left: 14px; margin-bottom: 6px; }
+.ai-body li { font-size: 12px; color: var(--text); line-height: 1.5; }
+.ai-body b  { color: var(--text); }
+
+.live-notice {
+  background: rgba(210, 165, 55, 0.08);
+  border: 1px solid rgba(210, 165, 55, 0.25);
+  border-radius: 12px; padding: 12px 14px;
+  font-size: 12px; color: var(--yellow);
+  margin-bottom: 12px; line-height: 1.5;
+}
 </style>
 </head>
 <body>
@@ -856,6 +932,7 @@ async function loadAll(forceRefresh = false) {
   if (currentTab === 'history')   renderHistory();
   if (currentTab === 'analytics') renderAnalytics();
   if (currentTab === 'portfolio') renderPortfolio();
+  loadBondData(forceRefresh).then(() => { if (currentTab === 'portfolio') renderPortfolio(); });
 }
 
 function updateSummary() {
@@ -1404,14 +1481,19 @@ function switchTab(tab) {
   document.getElementById('tab-portfolio').classList.toggle('active', tab === 'portfolio');
   if (tab === 'history')   renderHistory();
   if (tab === 'analytics') renderAnalytics();
-  if (tab === 'portfolio') renderPortfolio();
+  if (tab === 'portfolio') {
+    renderPortfolio();
+    if (bondLiveData === undefined && !bondLiveLoading) {
+      loadBondData().then(() => renderPortfolio());
+    }
+  }
 }
 
 function renderPortfolio() {
   const el = document.getElementById('portfolio-content');
   const typeLabel = t => t === 'ofz' ? 'ОФЗ' : t === 'muni' ? 'МО' : 'КО';
 
-  el.innerHTML = `<div class="portfolio-header">
+  el.innerHTML = renderLivePnlSection() + `<div class="portfolio-header">
     <div>
       <div class="portfolio-title">💼 Мой портфель</div>
       <div class="portfolio-count">${bonds.length} бумаг</div>
@@ -1686,7 +1768,170 @@ function checkUpcomingCoupons() {
   });
 }
 
+// ─── Live P&L — данные от бота (GitHub Pages) ───────────────────────────────
+const BOND_DATA_URL      = 'https://emplower.github.io/Bonds/bond_data.json';
+const BOND_DATA_LS_KEY   = 'bond_live_cache_v1';
+const BOND_DATA_TTL      = 30 * 60 * 1000; // 30 min
+
+let bondLiveData    = undefined; // undefined=not tried, null=failed, obj=ok
+let bondLiveLoading = false;
+
+async function loadBondData(force = false) {
+  if (bondLiveLoading) return;
+  if (!force && bondLiveData !== undefined) return;
+  if (!force) {
+    try {
+      const raw = localStorage.getItem(BOND_DATA_LS_KEY);
+      if (raw) {
+        const { ts, data } = JSON.parse(raw);
+        if (Date.now() - ts < BOND_DATA_TTL) { bondLiveData = data; return; }
+      }
+    } catch {}
+  }
+  bondLiveLoading = true;
+  try {
+    const res = await fetchWithTimeout(BOND_DATA_URL, 8000);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    bondLiveData = await res.json();
+    try { localStorage.setItem(BOND_DATA_LS_KEY, JSON.stringify({ ts: Date.now(), data: bondLiveData })); } catch {}
+  } catch (e) {
+    console.warn('loadBondData:', e);
+    bondLiveData = null;
+  } finally {
+    bondLiveLoading = false;
+  }
+}
+
+function mdToHtml(text) {
+  if (!text) return '';
+  const lines = text.split('\n');
+  let html = '', inList = false;
+  for (const raw of lines) {
+    let s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    if (/^## /.test(s)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<h2>' + s.slice(3) + '</h2>';
+    } else if (/^### /.test(s)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<h3>' + s.slice(4) + '</h3>';
+    } else if (/^[-•] /.test(s)) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += '<li>' + s.slice(2) + '</li>';
+    } else if (s.trim() === '') {
+      if (inList) { html += '</ul>'; inList = false; }
+    } else {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<p>' + s + '</p>';
+    }
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
+
+function toggleAi(btn) {
+  const body = btn.nextElementSibling;
+  const open = body.classList.toggle('open');
+  btn.querySelector('.ai-arrow').textContent = open ? '▲' : '▼';
+}
+
+function renderLivePnlSection() {
+  if (bondLiveLoading || bondLiveData === undefined) {
+    return '<div class="live-notice">⏳ Загрузка актуальных данных...</div>';
+  }
+  if (bondLiveData === null) {
+    return '<div class="live-notice">📡 Данные временно недоступны — бот ещё не публиковал отчёт или нет соединения с сетью.</div>';
+  }
+
+  const d = bondLiveData;
+  const pSign   = d.total_pnl >= 0 ? '+' : '';
+  const pCls    = d.total_pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+  const ppSign  = d.total_pnl_pct >= 0 ? '+' : '';
+
+  let updStr = d.updated || '—';
+  try {
+    const dt = new Date(d.updated.replace(' ', 'T'));
+    if (!isNaN(dt)) updStr = dt.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+  } catch {}
+
+  let html = `<div class="live-title">
+    📡 Данные от бота
+    <span class="live-badge">${updStr} · ЦБ ${d.cbr_rate}%</span>
+  </div>
+  <div class="live-summary">
+    <div class="live-card">
+      <div class="live-label">Вложено</div>
+      <div class="live-val" style="color:var(--text2)">${Math.round(d.total_inv/1000)}К</div>
+      <div class="live-sub">₽</div>
+    </div>
+    <div class="live-card">
+      <div class="live-label">Сейчас</div>
+      <div class="live-val" style="color:var(--accent3)">${Math.round(d.total_cur/1000)}К</div>
+      <div class="live-sub">₽</div>
+    </div>
+    <div class="live-card">
+      <div class="live-label">P&amp;L</div>
+      <div class="live-val ${pCls}">${pSign}${Math.round(d.total_pnl/1000)}К</div>
+      <div class="live-sub ${pCls}">${ppSign}${d.total_pnl_pct}%</div>
+    </div>
+  </div>`;
+
+  const sorted = [...(d.bonds || [])].sort((a, b) => (b.pnl_rub || 0) - (a.pnl_rub || 0));
+  if (sorted.length) {
+    html += `<div class="kpi-card" style="padding:0 4px;margin-bottom:12px;">
+      <div class="live-tbl-wrap">
+      <table class="live-table">
+        <thead><tr>
+          <th>Бумага</th>
+          <th>Цена</th>
+          <th>YTM</th>
+          <th>P&amp;L ₽</th>
+          <th>7д</th>
+        </tr></thead>
+        <tbody>`;
+    sorted.forEach(b => {
+      const icon   = b.ofz ? '🏛' : '🏢';
+      const pCls2  = b.pnl_rub > 0 ? 'lt-pos' : b.pnl_rub < 0 ? 'lt-neg' : 'lt-neu';
+      const ps     = b.pnl_rub > 0 ? '+' : '';
+      const ytm    = b.ytm != null ? b.ytm.toFixed(1) + '%' : '—';
+      let   dCls   = 'lt-neu', dStr = '—';
+      if (b.week_delta != null) {
+        dCls = b.week_delta > 0 ? 'lt-pos' : b.week_delta < 0 ? 'lt-neg' : 'lt-neu';
+        dStr = (b.week_delta > 0 ? '+' : '') + b.week_delta.toFixed(2);
+      }
+      html += `<tr>
+        <td>
+          <div class="lt-name">${icon} ${escapeHtml(b.name)}</div>
+          <div class="lt-meta">${b.qty} шт · avg ${b.avg_price.toFixed(1)}%</div>
+        </td>
+        <td class="lt-num">${b.price != null ? b.price.toFixed(2)+'%' : '—'}</td>
+        <td class="lt-num">${ytm}</td>
+        <td class="lt-num ${pCls2}">${ps}${(b.pnl_rub||0).toLocaleString('ru-RU')} ₽</td>
+        <td class="lt-num ${dCls}">${dStr}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div></div>`;
+  }
+
+  if (d.ai_corp || d.ai_portfolio) {
+    const body = [
+      d.ai_corp      ? '<h2>Корпоративные бумаги</h2>'  + mdToHtml(d.ai_corp)      : '',
+      d.ai_portfolio ? '<h2>Портфель целиком</h2>'       + mdToHtml(d.ai_portfolio) : ''
+    ].join('');
+    html += `<div class="ai-section">
+      <button class="ai-toggle" onclick="toggleAi(this)">
+        🤖 AI-анализ портфеля
+        <span class="ai-arrow">▼</span>
+      </button>
+      <div class="ai-body">${body}</div>
+    </div>`;
+  }
+
+  return html;
+}
+
 loadAll();
+loadBondData();
 </script>
 </body>
 </html>
