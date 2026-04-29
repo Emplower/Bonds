@@ -1817,12 +1817,15 @@ function mdToHtml(text) {
   for (const raw of lines) {
     let s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-    if (/^## /.test(s)) {
-      if (inList) { html += '</ul>'; inList = false; }
-      html += '<h2>' + s.slice(3) + '</h2>';
-    } else if (/^### /.test(s)) {
+    if (/^### /.test(s)) {
       if (inList) { html += '</ul>'; inList = false; }
       html += '<h3>' + s.slice(4) + '</h3>';
+    } else if (/^## /.test(s)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<h2>' + s.slice(3) + '</h2>';
+    } else if (/^# /.test(s)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<h2>' + s.slice(2) + '</h2>';
     } else if (/^[-•] /.test(s)) {
       if (!inList) { html += '<ul>'; inList = true; }
       html += '<li>' + s.slice(2) + '</li>';
@@ -1904,8 +1907,12 @@ function renderLivePnlSection() {
       const ytm    = b.ytm != null ? b.ytm.toFixed(1) + '%' : '—';
       let   dCls   = 'lt-neu', dStr = '—';
       if (b.week_delta != null) {
-        dCls = b.week_delta > 0 ? 'lt-pos' : b.week_delta < 0 ? 'lt-neg' : 'lt-neu';
-        dStr = (b.week_delta > 0 ? '+' : '') + b.week_delta.toFixed(2);
+        if (typeof b.week_delta === 'number') {
+          dCls = b.week_delta > 0 ? 'lt-pos' : b.week_delta < 0 ? 'lt-neg' : 'lt-neu';
+          dStr = (b.week_delta > 0 ? '+' : '') + b.week_delta.toFixed(2) + '%';
+        } else {
+          dStr = String(b.week_delta); // бот отдаёт строку типа "📈 за 2дн: +0.12%"
+        }
       }
       html += `<tr>
         <td>
