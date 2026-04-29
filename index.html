@@ -1493,7 +1493,8 @@ function renderPortfolio() {
   const el = document.getElementById('portfolio-content');
   const typeLabel = t => t === 'ofz' ? 'ОФЗ' : t === 'muni' ? 'МО' : 'КО';
 
-  el.innerHTML = renderLivePnlSection() + `<div class="portfolio-header">
+  // Live-секция в отдельный контейнер — не трогает парсинг портфельного редактора
+  el.innerHTML = `<div id="live-pnl-wrap"></div><div class="portfolio-header">
     <div>
       <div class="portfolio-title">💼 Мой портфель</div>
       <div class="portfolio-count">${bonds.length} бумаг</div>
@@ -1575,6 +1576,13 @@ function renderPortfolio() {
     </div>
     ${btn}
   </div>`);
+
+  // Вставляем live-секцию в зарезервированный контейнер — после полного рендера редактора
+  const liveWrap = document.getElementById('live-pnl-wrap');
+  if (liveWrap) {
+    try { liveWrap.innerHTML = renderLivePnlSection(); }
+    catch(e) { liveWrap.innerHTML = '<div class="live-notice">⚠️ Ошибка загрузки данных бота</div>'; }
+  }
 }
 
 function changeQty(idx, delta) {
