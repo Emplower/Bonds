@@ -10,7 +10,7 @@
   {"isin": "RU000A10ASW4", "su": null,            "name": "КАМАЗ БО-П14",              "type": "corp", "qty": 400, "avg_price": 101.810, "rate":  15.12},
   {"isin": "RU000A10CS75", "su": null,            "name": "Аэрофлот П02-БО-02",        "type": "corp", "qty": 160, "avg_price":  99.590, "rate":  13.79},
   {"isin": "RU000A1033Z8", "su": null,            "name": "Гор.Обл.Займ Москвы 74",    "type": "muni", "qty": 200, "avg_price":  68.950, "rate":  36.80},
-  {"isin": "RU000A10ASC6", "su": null,            "name": "Европлан 001P-09",           "type": "corp", "qty": 400, "avg_price": 101.320, "rate":  17.75},
+  {"isin": "RU000A10ASC6", "su": null,            "name": "Европлан 001P-09",           "type": "corp", "qty": 400, "avg_price": 101.320, "rate":  17.75, "face_factor": 0.9},
   {"isin": "RU000A10DPB8", "su": null,            "name": "КАМАЗ БО-П19",              "type": "corp", "qty": 100, "avg_price":  99.970, "rate":  14.59},
   {"isin": "RU000A10DYC8", "su": null,            "name": "ФПК 002Р-01",               "type": "corp", "qty": 400, "avg_price": 100.470, "rate":  12.66},
   {"isin": "RU000A1025A7", "su": "SU29015RMFS3",  "name": "ОФЗ 29015",                 "type": "ofz",  "qty": 290, "avg_price":  98.823, "rate":  37.91},
