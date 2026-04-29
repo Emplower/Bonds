@@ -11,10 +11,12 @@
   {"isin": "RU000A10CS75", "su": null,            "name": "Аэрофлот П02-БО-02",        "type": "corp", "qty": 160, "avg_price":  99.590, "rate":  13.79},
   {"isin": "RU000A1033Z8", "su": null,            "name": "Гор.Обл.Займ Москвы 74",    "type": "muni", "qty": 200, "avg_price":  68.950, "rate":  36.80},
   {"isin": "RU000A10ASC6", "su": null,            "name": "Европлан 001P-09",           "type": "corp", "qty": 400, "avg_price": 101.320, "rate":  17.75},
-  {"isin": "RU000A10DPB8", "su": null,            "name": "КАМАЗ БО-П19",              "type": "corp", "qty": 400, "avg_price":  99.970, "rate":  14.59},
+  {"isin": "RU000A10DPB8", "su": null,            "name": "КАМАЗ БО-П19",              "type": "corp", "qty": 100, "avg_price":  99.970, "rate":  14.59},
   {"isin": "RU000A10DYC8", "su": null,            "name": "ФПК 002Р-01",               "type": "corp", "qty": 400, "avg_price": 100.470, "rate":  12.66},
   {"isin": "RU000A1025A7", "su": "SU29015RMFS3",  "name": "ОФЗ 29015",                 "type": "ofz",  "qty": 290, "avg_price":  98.823, "rate":  37.91},
   {"isin": "RU000A10EA16", "su": null,            "name": "Почта России 003P-03",       "type": "corp", "qty": 360, "avg_price": 100.050, "rate":  14.59},
   {"isin": "RU000A10EXZ9", "su": null,            "name": "МКПАО Озон 001Р-02",        "type": "corp", "qty": 200, "avg_price": 100.000, "rate":  14.93},
-  {"isin": "RU000A105FZ9", "su": "SU26241RMFS8",  "name": "ОФЗ 26241",                 "type": "ofz",  "qty":  45, "avg_price":  81.348, "rate":  47.37}
+  {"isin": "RU000A105FZ9", "su": "SU26241RMFS8",  "name": "ОФЗ 26241",                 "type": "ofz",  "qty":  45, "avg_price":  81.348, "rate":  47.37},
+  {"isin": "RU000A10EYV6", "su": null,            "name": "ПГК 003Р-04",               "type": "corp", "qty": 300, "avg_price": 100.000, "rate":   0.00},
+  {"isin": "RU000A10EYW4", "su": null,            "name": "ПГК 003Р-05",               "type": "corp", "qty": 200, "avg_price": 100.000, "rate":   0.00}
 ]
