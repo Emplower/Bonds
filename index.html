@@ -754,7 +754,7 @@ async function fetchBond(bond) {
 
     let nextDate = null, nextRate = null, nextValueprc = null, nextPeriod = null, nextFace = null;
     let lastDate = null, lastRate = null, lastValueprc = null, lastPeriod = null, lastFace = null;
-    let moexYtm = null, moexPrice = null;
+    let moexYtm = null, moexPrice = null, moexNkd = null;
     let isFloater = FLOATER_ISINS.has(bond.isin);
 
     let { cols, rows } = await fetchAllCoupons(bond.isin);
@@ -831,6 +831,8 @@ async function fetchBond(bond) {
         const mget = k => mrow[mc.indexOf(k)];
         const livePrice = mget('LAST') || mget('WAPRICE');
         if (livePrice != null && livePrice > 0) moexPrice = livePrice;
+        const nkd = mget('ACCINT');
+        if (nkd != null && nkd > 0) moexNkd = nkd;
         if (!moexYtm && !isFloater) {
           const y1 = mget('YIELDATPREVWAPRICE');
           const y2 = mget('YIELDATWAPRICE');
@@ -842,10 +844,10 @@ async function fetchBond(bond) {
 
     if (isFloater) moexYtm = null;
 
-    return { nextDate, nextRate, nextValueprc, nextPeriod, nextFace, lastDate, lastRate, lastValueprc, lastPeriod, lastFace, moexYtm, moexPrice, isFloater };
+    return { nextDate, nextRate, nextValueprc, nextPeriod, nextFace, lastDate, lastRate, lastValueprc, lastPeriod, lastFace, moexYtm, moexPrice, moexNkd, isFloater };
   } catch (err) {
     console.warn(`Ошибка загрузки ${bond.isin}:`, err);
-    return { nextDate: null, nextRate: null, nextValueprc: null, nextPeriod: null, nextFace: null, lastDate: null, lastRate: null, lastValueprc: null, lastPeriod: null, lastFace: null, moexYtm: null, moexPrice: null, isFloater: false };
+    return { nextDate: null, nextRate: null, nextValueprc: null, nextPeriod: null, nextFace: null, lastDate: null, lastRate: null, lastValueprc: null, lastPeriod: null, lastFace: null, moexYtm: null, moexPrice: null, moexNkd: null, isFloater: false };
   }
 }
 
@@ -1254,8 +1256,9 @@ function renderAnalytics() {
     const d = couponData[b.isin];
     let price = d?.moexPrice;
     const face = d?.lastFace ?? d?.nextFace ?? 1000;
+    const nkd  = d?.moexNkd ?? 0;
     if (price && price > 0) {
-      totalMarketValue += b.qty * face * (price / 100);
+      totalMarketValue += b.qty * face * (price / 100) + nkd * b.qty;
     } else {
       totalMarketValue += b.qty * face;
     }
