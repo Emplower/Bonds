@@ -821,8 +821,10 @@ async function fetchBond(bond) {
           nextFace     = 1000;
         }
         moexPrice = get('PREVLEGALCLOSEPRICE') || get('PREVWAPRICE');
-        const y = get('YIELDATPREVWAPRICE');
-        if (y != null && y > 0 && !isFloater) moexYtm = y;
+        if (!isFloater) {
+          const y = get('YIELDATPREVWAPRICE');
+          if (y != null && y > 0) moexYtm = y;
+        }
       }
 
       if (data && data.marketdata && data.marketdata.data && data.marketdata.data.length) {
@@ -833,11 +835,12 @@ async function fetchBond(bond) {
         if (livePrice != null && livePrice > 0) moexPrice = livePrice;
         const nkd = mget('ACCINT');
         if (nkd != null && nkd > 0) moexNkd = nkd;
-        if (!moexYtm && !isFloater) {
-          const y1 = mget('YIELDATPREVWAPRICE');
-          const y2 = mget('YIELDATWAPRICE');
-          if (y1 != null && y1 > 0) moexYtm = y1;
-          else if (y2 != null && y2 > 0) moexYtm = y2;
+        if (!isFloater) {
+          const yLive = mget('YIELD');
+          const yWap  = mget('YIELDATWAPRICE');
+          const yPrev = mget('YIELDATPREVWAPRICE');
+          const best  = (yLive > 0 ? yLive : null) ?? (yWap > 0 ? yWap : null) ?? yPrev;
+          if (best != null && best > 0) moexYtm = best;
         }
       }
     } catch {}
