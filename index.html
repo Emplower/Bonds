@@ -825,14 +825,18 @@ async function fetchBond(bond) {
         if (y != null && y > 0 && !isFloater) moexYtm = y;
       }
 
-      if (!moexYtm && !isFloater && data && data.marketdata && data.marketdata.data && data.marketdata.data.length) {
+      if (data && data.marketdata && data.marketdata.data && data.marketdata.data.length) {
         const mc   = data.marketdata.columns;
         const mrow = data.marketdata.data[0];
         const mget = k => mrow[mc.indexOf(k)];
-        const y1 = mget('YIELDATPREVWAPRICE');
-        const y2 = mget('YIELDATWAPRICE');
-        if (y1 != null && y1 > 0) moexYtm = y1;
-        else if (y2 != null && y2 > 0) moexYtm = y2;
+        const livePrice = mget('LAST') || mget('WAPRICE');
+        if (livePrice != null && livePrice > 0) moexPrice = livePrice;
+        if (!moexYtm && !isFloater) {
+          const y1 = mget('YIELDATPREVWAPRICE');
+          const y2 = mget('YIELDATWAPRICE');
+          if (y1 != null && y1 > 0) moexYtm = y1;
+          else if (y2 != null && y2 > 0) moexYtm = y2;
+        }
       }
     } catch {}
 
