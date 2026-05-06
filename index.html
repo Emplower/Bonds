@@ -821,6 +821,8 @@ async function fetchBond(bond) {
           nextFace     = 1000;
         }
         moexPrice = get('PREVLEGALCLOSEPRICE') || get('PREVWAPRICE');
+        const nkdSec = get('ACCRUEDINT');
+        if (nkdSec != null && nkdSec > 0) moexNkd = nkdSec;
         if (!isFloater) {
           const y = get('YIELDATPREVWAPRICE');
           if (y != null && y > 0) moexYtm = y;
@@ -833,8 +835,6 @@ async function fetchBond(bond) {
         const mget = k => mrow[mc.indexOf(k)];
         const livePrice = mget('LAST') || mget('WAPRICE');
         if (livePrice != null && livePrice > 0) moexPrice = livePrice;
-        const nkd = mget('ACCINT');
-        if (nkd != null && nkd > 0) moexNkd = nkd;
         if (!isFloater) {
           const yLive = mget('YIELD');
           const yWap  = mget('YIELDATWAPRICE');
