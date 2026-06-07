@@ -586,36 +586,38 @@ body {
 </div>
 
 <script>
-// ─── ПОРТФЕЛЬ — актуализирован по данным из xlsx (апрель 2026) ───
+// ─── РЕЗЕРВНЫЙ список бумаг (fallback). Основной источник — portfolio.json,
+// который тянется с GitHub при загрузке. Этот массив используется ТОЛЬКО
+// если portfolio.json недоступен. Менять портфель надо в portfolio.json! ───
 const DEFAULT_BONDS = [
-  { isin: 'RU000A105FZ9', name: 'ОФЗ 26241',                  type: 'ofz',  qty: 70,  rate: 47.37 },
-  { isin: 'RU000A10D4Y2', name: 'ОФЗ 26252',                  type: 'ofz',  qty: 120, rate: 62.33 },
-  { isin: 'RU000A0JV4Q1', name: 'ОФЗ 29010',                  type: 'ofz',  qty: 200, rate: 95.44 },
-  { isin: 'RU000A0JXFM1', name: 'ОФЗ 26221',                  type: 'ofz',  qty: 300, rate: 38.39 },
-  { isin: 'RU000A0ZYR91', name: 'ГТЛК БО 001Р-08',            type: 'corp', qty: 250, rate: 28.22 },
-  { isin: 'RU000A100EF5', name: 'ОФЗ 26230',                  type: 'ofz',  qty: 500, rate: 38.39 },
-  { isin: 'RU000A1017J5', name: 'Газпром нефть БО-003P-02R',  type: 'corp', qty: 300, rate: 17.83 },
-  { isin: 'RU000A1038V6', name: 'ОФЗ 26238',                  type: 'ofz',  qty: 500, rate: 35.40 },
-  { isin: 'RU000A102BV4', name: 'ОФЗ 29020',                  type: 'ofz',  qty: 400, rate: 38.70 },
-  { isin: 'RU000A10EMS7', name: 'СелоЗеленое 001Р-03',        type: 'corp', qty: 250, rate: 14.67 },
-  { isin: 'RU000A10F470', name: 'ТрансКонтейнер П02-03',        type: 'corp', qty: 300, rate: 0 },
-  { isin: 'RU000A1033Z8', name: 'Гор.Обл.Займ Москвы 74',     type: 'muni', qty: 350, rate: 36.80 },
-  { isin: 'RU000A10ASC6', name: 'ПАО ЛК Европлан 001P-09',    type: 'corp', qty: 400, rate: 17.75 },
-  { isin: 'RU000A10DYC8', name: 'ФПК 002Р-01',                type: 'corp', qty: 400, rate: 12.66 },
-  { isin: 'RU000A1025A7', name: 'ОФЗ 29015',                  type: 'ofz',  qty: 290, rate: 37.91 },
-  { isin: 'RU000A10EXZ9', name: 'МКПАО "Озон" 001Р-02',        type: 'corp', qty: 200, rate: 14.93 },
-  { isin: 'RU000A10EA16', name: 'Почта России 003P-03',        type: 'corp', qty: 360, rate: 14.59 },
-  { isin: 'RU000A10EYV6', name: 'ПГК 003Р-04',                type: 'corp', qty: 300, rate: 12.66 },
-  { isin: 'RU000A10EYW4', name: 'ПГК 003Р-05',                type: 'corp', qty: 200, rate: 13.18 },
+  { isin: 'RU000A0JV4Q1', name: 'ОФЗ 29010', type: 'ofz', qty: 200, rate: 95.44 },
+  { isin: 'RU000A102BV4', name: 'ОФЗ 29020', type: 'ofz', qty: 400, rate: 38.7 },
+  { isin: 'RU000A10EXZ9', name: 'МКПАО "Озон" 001Р-02', type: 'corp', qty: 200, rate: 13.66 },
+  { isin: 'RU000A10EA16', name: 'Почта России 003P-03', type: 'corp', qty: 360, rate: 14.59 },
+  { isin: 'RU000A0JXFM1', name: 'ОФЗ 26221', type: 'ofz', qty: 350, rate: 38.39 },
+  { isin: 'RU000A0ZYR91', name: 'ГТЛК БО 001Р-08', type: 'corp', qty: 250, rate: 28.22 },
+  { isin: 'RU000A100EF5', name: 'ОФЗ 26230', type: 'ofz', qty: 510, rate: 38.39 },
+  { isin: 'RU000A1017J5', name: 'Газпром нефть БО-003P-02R', type: 'corp', qty: 300, rate: 17.83 },
+  { isin: 'RU000A1038V6', name: 'ОФЗ 26238', type: 'ofz', qty: 537, rate: 35.4 },
+  { isin: 'RU000A10EMS7', name: 'СелоЗеленое 001Р-03', type: 'corp', qty: 250, rate: 14.67 },
+  { isin: 'RU000A1033Z8', name: 'Гор.Обл.Займ Москвы 74', type: 'muni', qty: 350, rate: 36.8 },
+  { isin: 'RU000A10ASC6', name: 'ПАО ЛК Европлан 001P-09', type: 'corp', qty: 400, rate: 17.75 },
+  { isin: 'RU000A10DYC8', name: 'ФПК 002Р-01', type: 'corp', qty: 400, rate: 12.66 },
+  { isin: 'RU000A1025A7', name: 'ОФЗ 29015', type: 'ofz', qty: 290, rate: 37.91 },
+  { isin: 'RU000A105FZ9', name: 'ОФЗ 26241', type: 'ofz', qty: 73, rate: 47.37 },
+  { isin: 'RU000A10EYW4', name: 'ПГК 003Р-05', type: 'corp', qty: 200, rate: 13.18 },
+  { isin: 'RU000A10EYV6', name: 'ПГК 003Р-04', type: 'corp', qty: 300, rate: 12.66 },
+  { isin: 'RU000A10D4Y2', name: 'ОФЗ 26252', type: 'ofz', qty: 120, rate: 62.33 },
+  { isin: 'RU000A10F470', name: 'ТрансКонтейнер П02-03', type: 'corp', qty: 300, rate: 13.56 },
 ];
 
-const FLOATER_ISINS = new Set([
+let FLOATER_ISINS = new Set([
   'RU000A0JV4Q1',  // ОФЗ 29010
   'RU000A1025A7',  // ОФЗ 29015
   'RU000A102BV4',  // ОФЗ 29020
 ]);
 
-const LS_KEY = 'coupon_portfolio_v1';
+const LS_KEY = 'coupon_portfolio_v3';
 const CACHE_KEY = 'coupon_cache_v2';
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 
@@ -632,6 +634,35 @@ function loadPortfolio() {
     }
   } catch {}
   return null;
+}
+
+
+// ─── ЕДИНЫЙ ИСТОЧНИК ПОРТФЕЛЯ — portfolio.json (его же читает бот) ───────────
+const PORTFOLIO_URL = 'https://emplower.github.io/Bonds/portfolio.json';
+
+function mapPortfolioRow(b) {
+  return {
+    isin: b.isin,
+    name: b.name,
+    type: b.type || (b.ofz ? 'ofz' : 'corp'),
+    qty:  b.qty,
+    rate: b.rate,
+  };
+}
+
+async function loadPortfolioFile() {
+  try {
+    const res = await fetchWithTimeout(PORTFOLIO_URL + '?t=' + Date.now(), 8000);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const arr = Array.isArray(data) ? data : data.bonds;
+    if (!Array.isArray(arr) || arr.length === 0) throw new Error('portfolio.json пустой');
+    arr.forEach(b => { if (b.floater) FLOATER_ISINS.add(b.isin); });
+    return arr.map(mapPortfolioRow);
+  } catch (e) {
+    console.warn('portfolio.json не загружен, использую кэш/fallback:', e);
+    return null;
+  }
 }
 
 let bonds = (loadPortfolio() || DEFAULT_BONDS).map(b => ({ ...b }));
@@ -1956,8 +1987,15 @@ function renderLivePnlSection() {
   return html;
 }
 
-loadAll();
-loadBondData();
+(async () => {
+  const remote = await loadPortfolioFile();
+  if (remote) {
+    bonds = remote.map(b => ({ ...b }));
+    savePortfolio();            // обновляем локальный кэш свежими данными
+  }
+  loadAll();
+  loadBondData();
+})();
 </script>
 </body>
 </html>
