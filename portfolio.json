@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "updated": "2026-06-07",
+  "comment": "Единый источник портфеля для бота и сайта. Правится ТОЛЬКО здесь. type: ofz|corp|muni. su: SU-тикер для ОФЗ, иначе null. avg_price — средняя цена покупки (%). rate — купон в рублях. face_factor — для амортизированных. floater — для ОФЗ-флоатеров.",
+  "bonds": [
+    {
+      "isin": "RU000A0JV4Q1",
+      "name": "ОФЗ 29010",
+      "type": "ofz",
+      "su": "SU29010RMFS4",
+      "qty": 200,
+      "avg_price": 103.735,
+      "rate": 95.44,
+      "floater": true
+    },
+    {
+      "isin": "RU000A102BV4",
+      "name": "ОФЗ 29020",
+      "type": "ofz",
+      "su": "SU29020RMFS3",
+      "qty": 400,
+      "avg_price": 99.125,
+      "rate": 38.7,
+      "floater": true
+    },
+    {
+      "isin": "RU000A10EXZ9",
+      "name": "МКПАО \"Озон\" 001Р-02",
+      "type": "corp",
+      "su": null,
+      "qty": 200,
+      "avg_price": 100.0,
+      "rate": 13.66
+    },
+    {
+      "isin": "RU000A10EA16",
+      "name": "Почта России 003P-03",
+      "type": "corp",
+      "su": null,
+      "qty": 360,
+      "avg_price": 100.05,
+      "rate": 14.59
+    },
+    {
+      "isin": "RU000A0JXFM1",
+      "name": "ОФЗ 26221",
+      "type": "ofz",
+      "su": "SU26221RMFS0",
+      "qty": 350,
+      "avg_price": 59.624,
+      "rate": 38.39
+    },
+    {
+      "isin": "RU000A0ZYR91",
+      "name": "ГТЛК БО 001Р-08",
+      "type": "corp",
+      "su": null,
+      "qty": 250,
+      "avg_price": 75.0,
+      "rate": 28.22
+    },
+    {
+      "isin": "RU000A100EF5",
+      "name": "ОФЗ 26230",
+      "type": "ofz",
+      "su": "SU26230RMFS1",
+      "qty": 510,
+      "avg_price": 56.876,
+      "rate": 38.39
+    },
+    {
+      "isin": "RU000A1017J5",
+      "name": "Газпром нефть БО-003P-02R",
+      "type": "corp",
+      "su": null,
+      "qty": 300,
+      "avg_price": 77.91,
+      "rate": 17.83
+    },
+    {
+      "isin": "RU000A1038V6",
+      "name": "ОФЗ 26238",
+      "type": "ofz",
+      "su": "SU26238RMFS4",
+      "qty": 537,
+      "avg_price": 51.251,
+      "rate": 35.4
+    },
+    {
+      "isin": "RU000A10EMS7",
+      "name": "СелоЗеленое 001Р-03",
+      "type": "corp",
+      "su": null,
+      "qty": 250,
+      "avg_price": 100.0,
+      "rate": 14.67
+    },
+    {
+      "isin": "RU000A1033Z8",
+      "name": "Гор.Обл.Займ Москвы 74",
+      "type": "muni",
+      "su": null,
+      "qty": 350,
+      "avg_price": 77.49,
+      "rate": 36.8
+    },
+    {
+      "isin": "RU000A10ASC6",
+      "name": "ПАО ЛК Европлан 001P-09",
+      "type": "corp",
+      "su": null,
+      "qty": 400,
+      "avg_price": 101.32,
+      "rate": 17.75,
+      "face_factor": 0.9
+    },
+    {
+      "isin": "RU000A10DYC8",
+      "name": "ФПК 002Р-01",
+      "type": "corp",
+      "su": null,
+      "qty": 400,
+      "avg_price": 100.47,
+      "rate": 12.66
+    },
+    {
+      "isin": "RU000A1025A7",
+      "name": "ОФЗ 29015",
+      "type": "ofz",
+      "su": "SU29015RMFS3",
+      "qty": 290,
+      "avg_price": 98.823,
+      "rate": 37.91,
+      "floater": true
+    },
+    {
+      "isin": "RU000A105FZ9",
+      "name": "ОФЗ 26241",
+      "type": "ofz",
+      "su": "SU26241RMFS8",
+      "qty": 73,
+      "avg_price": 81.606,
+      "rate": 47.37
+    },
+    {
+      "isin": "RU000A10EYW4",
+      "name": "ПГК 003Р-05",
+      "type": "corp",
+      "su": null,
+      "qty": 200,
+      "avg_price": 100.0,
+      "rate": 13.18
+    },
+    {
+      "isin": "RU000A10EYV6",
+      "name": "ПГК 003Р-04",
+      "type": "corp",
+      "su": null,
+      "qty": 300,
+      "avg_price": 100.0,
+      "rate": 12.66
+    },
+    {
+      "isin": "RU000A10D4Y2",
+      "name": "ОФЗ 26252",
+      "type": "ofz",
+      "su": "SU26252RMFS5",
+      "qty": 120,
+      "avg_price": 93.347,
+      "rate": 62.33
+    },
+    {
+      "isin": "RU000A10F470",
+      "name": "ТрансКонтейнер П02-03",
+      "type": "corp",
+      "su": null,
+      "qty": 300,
+      "avg_price": 100.0,
+      "rate": 13.56
+    }
+  ]
+}
