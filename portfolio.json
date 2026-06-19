@@ -1,7 +1,4 @@
 {
-  "version": 1,
-  "updated": "2026-06-07",
-  "comment": "Единый источник портфеля для бота и сайта. Правится ТОЛЬКО здесь. type: ofz|corp|muni. su: SU-тикер для ОФЗ, иначе null. avg_price — средняя цена покупки (%). rate — купон в рублях. face_factor — для амортизированных. floater — для ОФЗ-флоатеров.",
   "bonds": [
     {
       "isin": "RU000A0JV4Q1",
@@ -10,36 +7,8 @@
       "su": "SU29010RMFS4",
       "qty": 200,
       "avg_price": 103.735,
-      "rate": 95.44,
+      "rate": 82.72,
       "floater": true
-    },
-    {
-      "isin": "RU000A102BV4",
-      "name": "ОФЗ 29020",
-      "type": "ofz",
-      "su": "SU29020RMFS3",
-      "qty": 400,
-      "avg_price": 99.125,
-      "rate": 38.7,
-      "floater": true
-    },
-    {
-      "isin": "RU000A10EXZ9",
-      "name": "МКПАО \"Озон\" 001Р-02",
-      "type": "corp",
-      "su": null,
-      "qty": 200,
-      "avg_price": 100.0,
-      "rate": 13.66
-    },
-    {
-      "isin": "RU000A10EA16",
-      "name": "Почта России 003P-03",
-      "type": "corp",
-      "su": null,
-      "qty": 360,
-      "avg_price": 100.05,
-      "rate": 14.59
     },
     {
       "isin": "RU000A0JXFM1",
@@ -47,7 +16,7 @@
       "type": "ofz",
       "su": "SU26221RMFS0",
       "qty": 350,
-      "avg_price": 59.624,
+      "avg_price": 61.368,
       "rate": 38.39
     },
     {
@@ -65,7 +34,7 @@
       "type": "ofz",
       "su": "SU26230RMFS1",
       "qty": 510,
-      "avg_price": 56.876,
+      "avg_price": 56.867,
       "rate": 38.39
     },
     {
@@ -82,9 +51,19 @@
       "name": "ОФЗ 26238",
       "type": "ofz",
       "su": "SU26238RMFS4",
-      "qty": 544,
-      "avg_price": 51.327,
+      "qty": 595,
+      "avg_price": 51.746,
       "rate": 35.4
+    },
+    {
+      "isin": "RU000A102BV4",
+      "name": "ОФЗ 29020",
+      "type": "ofz",
+      "su": "SU29020RMFS3",
+      "qty": 400,
+      "avg_price": 99.125,
+      "rate": 38.7,
+      "floater": true
     },
     {
       "isin": "RU000A10EMS7",
@@ -93,7 +72,7 @@
       "su": null,
       "qty": 250,
       "avg_price": 100.0,
-      "rate": 14.67
+      "rate": 14.18
     },
     {
       "isin": "RU000A1033Z8",
@@ -134,12 +113,30 @@
       "floater": true
     },
     {
+      "isin": "RU000A10EXZ9",
+      "name": "МКПАО \"Озон\" 001Р-02",
+      "type": "corp",
+      "su": null,
+      "qty": 200,
+      "avg_price": 100.0,
+      "rate": 13.56
+    },
+    {
+      "isin": "RU000A10EA16",
+      "name": "Почта России 003P-03",
+      "type": "corp",
+      "su": null,
+      "qty": 360,
+      "avg_price": 100.05,
+      "rate": 14.59
+    },
+    {
       "isin": "RU000A105FZ9",
       "name": "ОФЗ 26241",
       "type": "ofz",
       "su": "SU26241RMFS8",
       "qty": 73,
-      "avg_price": 81.606,
+      "avg_price": 81.615,
       "rate": 47.37
     },
     {
@@ -149,7 +146,7 @@
       "su": null,
       "qty": 200,
       "avg_price": 100.0,
-      "rate": 13.18
+      "rate": 14.01
     },
     {
       "isin": "RU000A10EYV6",
