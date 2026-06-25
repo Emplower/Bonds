@@ -33,8 +33,8 @@
       "name": "ОФЗ 26230",
       "type": "ofz",
       "su": "SU26230RMFS1",
-      "qty": 510,
-      "avg_price": 56.867,
+      "qty": 530,
+      "avg_price": 56.961,
       "rate": 38.39
     },
     {
@@ -51,8 +51,8 @@
       "name": "ОФЗ 26238",
       "type": "ofz",
       "su": "SU26238RMFS4",
-      "qty": 595,
-      "avg_price": 51.746,
+      "qty": 600,
+      "avg_price": 51.765,
       "rate": 35.4
     },
     {
@@ -79,8 +79,8 @@
       "name": "Гор.Обл.Займ Москвы 74",
       "type": "muni",
       "su": null,
-      "qty": 350,
-      "avg_price": 77.49,
+      "qty": 360,
+      "avg_price": 77.80,
       "rate": 36.8
     },
     {
@@ -135,8 +135,8 @@
       "name": "ОФЗ 26241",
       "type": "ofz",
       "su": "SU26241RMFS8",
-      "qty": 73,
-      "avg_price": 81.615,
+      "qty": 80,
+      "avg_price": 81.463,
       "rate": 47.37
     },
     {
