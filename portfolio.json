@@ -33,8 +33,8 @@
       "name": "ОФЗ 26230",
       "type": "ofz",
       "su": "SU26230RMFS1",
-      "qty": 510,
-      "avg_price": 56.867,
+      "qty": 535,
+      "avg_price": 56.966,
       "rate": 38.39
     },
     {
@@ -51,8 +51,8 @@
       "name": "ОФЗ 26238",
       "type": "ofz",
       "su": "SU26238RMFS4",
-      "qty": 595,
-      "avg_price": 51.746,
+      "qty": 600,
+      "avg_price": 51.765,
       "rate": 35.4
     },
     {
@@ -62,7 +62,7 @@
       "su": "SU29020RMFS3",
       "qty": 400,
       "avg_price": 99.125,
-      "rate": 38.7,
+      "rate": 35.87,
       "floater": true
     },
     {
@@ -79,8 +79,8 @@
       "name": "Гор.Обл.Займ Москвы 74",
       "type": "muni",
       "su": null,
-      "qty": 350,
-      "avg_price": 77.49,
+      "qty": 370,
+      "avg_price": 78.09,
       "rate": 36.8
     },
     {
@@ -135,8 +135,8 @@
       "name": "ОФЗ 26241",
       "type": "ofz",
       "su": "SU26241RMFS8",
-      "qty": 73,
-      "avg_price": 81.615,
+      "qty": 80,
+      "avg_price": 81.463,
       "rate": 47.37
     },
     {
@@ -146,7 +146,7 @@
       "su": null,
       "qty": 200,
       "avg_price": 100.0,
-      "rate": 14.01
+      "rate": 13.97
     },
     {
       "isin": "RU000A10EYV6",
